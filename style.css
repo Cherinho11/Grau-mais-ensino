@@ -1,0 +1,102 @@
+/* Reset básico e variáveis de cor */
+:root {
+    --bg-color: #121214;
+    --card-bg: #1a1a1e;
+    --text-primary: #e1e1e6;
+    --text-secondary: #a8a8b3;
+    --accent-color: #4ade80; /* Verde minimalista para destaques */
+    --border-color: #29292e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    padding: 2rem 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Cabeçalho */
+header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Secções principais */
+main section {
+    margin-bottom: 3rem;
+}
+
+main h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+main p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Lista de Cursos (Grid minimalista em vez de balas) */
+ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+    list-style: none;
+    margin-top: 1.5rem;
+}
+
+ul li {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+ul li:hover {
+    border-color: var(--accent-color);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+/* Rodapé */
+footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+footer p:hover {
+    color: var(--accent-color);
+    cursor: pointer;
+}
