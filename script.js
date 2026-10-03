@@ -11,8 +11,8 @@ async function carregarCursosDoBanco() {
         // Exemplo: Procura uma tabela chamada 'cursos' e seleciona a coluna 'nome'
         const { data, error } = await supabase
             .from('cursos')
-            .select('nome');
-
+            .select('nome')
+            .insert('nome');
         if (error) throw error;
 
         // Se encontrar dados no banco, atualiza a lista do HTML dinamicamente
