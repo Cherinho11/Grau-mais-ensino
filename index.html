@@ -4,8 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aulas de Educação - Reforço Escolar</title>
-    <link rel="stylesheet" href="style.css">
-
+    <!-- Importando o cliente do Supabase via CDN -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; line-height: 1.6; color: #333; }
+        header, main, footer { padding: 2rem; max-width: 800px; margin: auto; }
+        header { background: #f4f4f4; text-align: center; }
+        form { background: #f9f9f9; padding: 1.5rem; border: 1px solid #ddd; margin-top: 2rem; border-radius: 5px; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: .5rem; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: .5rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #007bff; color: white; border: none; padding: .7rem 1.5rem; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        #mensagem-status { margin-top: 1rem; font-weight: bold; }
+    </style>
 </head>
 <body>
     <header>
@@ -23,29 +35,104 @@
             <h2>Nossos Cursos</h2>
             <ul>
                 <li>Reforço de Matemática Básica</li>
-              <li>Matemática avançada</li>
+                <li>Matemática avançada</li>
                 <li>Redação e Interpretação de Texto</li>
                 <li>Ciências para estudantes</li>
-             <li>Inglês avançado para estudantes</li>
-              <li>Biologia para estudantes</li>
-             <li>Linguagens avançada para estudantes</li>
-           <li>Educação física para melhorar a saúde</li>
-         <li>Artes para 
-estudantes</li>
-        <li>Física avançada para estudantes</li>
-       <li>Química avançada para estudantes</li>
-     <li>Geografia para estudantes</li>
-    <li>Filosofia para
- estudantes</li>
-   <li>Sociologia para estudantes</li>
-   <li>Informática avançada para estudantes</li>
- </ul>
+                <li>Inglês avançado para estudantes</li>
+                <li>Biologia para estudantes</li>
+                <li>Linguagens avançada para estudantes</li>
+                <li>Educação física para melhorar a saúde</li>
+                <li>Artes para estudantes</li>
+                <li>Física avançada para estudantes</li>
+                <li>Química avançada para estudantes</li>
+                <li>Geografia para estudantes</li>
+                <li>Filosofia para estudantes</li>
+                <li>Sociologia para estudantes</li>
+                <li>Informática avançada para estudantes</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Inscreva-se nas Aulas</h2>
+            <form id="form-contato">
+                <div class="form-group">
+                    <label for="nome">Nome Completo:</label>
+                    <input type="text" id="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="curso">Curso Desejado:</label>
+                    <select id="curso" required>
+                        <option value="">Selecione um curso</option>
+                        <option value="Reforço de Matemática Básica">Reforço de Matemática Básica</option>
+                        <option value="Matemática avançada">Matemática avançada</option>
+                        <option value="Redação e Interpretação de Texto">Redação e Interpretação de Texto</option>
+                        <option value="Ciências para estudantes">Ciências para estudantes</option>
+                        <option value="Inglês avançado para estudantes">Inglês avançado para estudantes</option>
+                        <option value="Biologia para estudantes">Biologia para estudantes</option>
+                        <option value="Linguagens avançada para estudantes">Linguagens avançada para estudantes</option>
+                        <option value="Educação física para melhorar a saúde">Educação física para melhorar a saúde</option>
+                        <option value="Artes para estudantes">Artes para estudantes</option>
+                        <option value="Física avançada para estudantes">Física avançada para estudantes</option>
+                        <option value="Química avançada para estudantes">Química avançada para estudantes</option>
+                        <option value="Geografia para estudantes">Geografia para estudantes</option>
+                        <option value="Filosofia para estudantes">Filosofia para estudantes</option>
+                        <option value="Sociologia para estudantes">Sociologia para estudantes</option>
+                        <option value="Informática avançada para estudantes">Informática avançada para estudantes</option>
+                    </select>
+                </div>
+                <button type="submit">Enviar Inscrição</button>
+                <p id="mensagem-status"></p>
+            </form>
         </section>
     </main>
-<script src="https://jsdelivr.net"></script>
-<script defer src="script.js"></script>
+    
     <footer>
         <p>Contato: Grauescola@educacao.com.br</p>
     </footer>
+
+    <!-- Script de Integração com o Supabase -->
+    <script>
+        // Substitua pelas suas credenciais reais do projeto Supabase
+        const SUPABASE_URL = 'SUA_SUPABASE_URL_AQUI';
+        const SUPABASE_ANON_KEY = 'SUA_SUPABASE_ANON_KEY_AQUI';
+
+        // Inicializa o cliente do Supabase
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const formulario = document.getElementById('form-contato');
+        const statusMensagem = document.getElementById('mensagem-status');
+
+        formulario.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const curso = document.getElementById('curso').value;
+
+            statusMensagem.style.color = '#333';
+            statusMensagem.textContent = 'Enviando dados...';
+
+            // Insere os dados na tabela 'inscricoes' do Supabase
+            // Certifique-se de criar uma tabela chamada 'inscricoes' com as colunas: nome, email, curso
+            const { data, error } = await _supabase
+                .from('inscricoes')
+                .insert([{ nome: nome, email: email, curso: curso }]);
+
+            if (error) {
+                console.error('Erro ao inserir:', error);
+                statusMensagem.style.color = 'red';
+                statusMensagem.textContent = 'Erro ao enviar inscrição. Tente novamente.';
+            } else {
+                statusMensagem.style.color = 'green';
+                statusMensagem.textContent = 'Inscrição enviada com sucesso!';
+                formulario.reset();
+            }
+        });
+    </script>
 </body>
 </html>
