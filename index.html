@@ -286,45 +286,9 @@
         // Inicialização das funções
         popularSelect();
         renderizarCursos();
-
-        // INTEGRACAO COM SUPABASE
-        const SUPABASE_URL = 'SUA_SUPABASE_URL_AQUI';
-        const SUPABASE_ANON_KEY = 'SUA_SUPABASE_ANON_KEY_AQUI';
-
-        const { createClient } = supabase;
-        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        const formulario = document.getElementById('form-contato');
-        const statusMensagem = document.getElementById('mensagem-status');
-
-        formulario.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const nome = document.getElementById('nome').value;
-            const email = document.getElementById('email').value;
-            const curso = document.getElementById('curso').value;
-
-            statusMensagem.style.display = 'block';
-            statusMensagem.style.backgroundColor = '#e2e8f0';
-            statusMensagem.style.color = '#1e293b';
-            statusMensagem.textContent = 'Enviando dados...';
-
-            const { data, error } = await _supabase
-                .from('inscricoes')
-                .insert([{ nome: nome, email: email, curso: curso }]);
-
-            if (error) {
-                console.error('Erro ao inserir:', error);
-                statusMensagem.style.backgroundColor = '#fef2f2';
-                statusMensagem.style.color = '#dc2626';
-                statusMensagem.textContent = 'Erro ao enviar inscrição. Verifique os dados ou tente novamente.';
-            } else {
-                statusMensagem.style.backgroundColor = '#f0fdf4';
-                statusMensagem.style.color = '#16a34a';
-                statusMensagem.textContent = 'Inscrição realizada com sucesso!';
-                formulario.reset();
-            }
-        });
     </script>
+
+    <!-- Integração com o Supabase (conexão + insert) -->
+    <script src="script.js"></script>
 </body>
 </html>
