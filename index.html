@@ -4,103 +4,289 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aulas de Educação - Reforço Escolar</title>
-    <!-- Importando o cliente do Supabase via CDN -->
-    <script src="https://jsdelivr.net"></script>
+    <!-- Importando a biblioteca oficial do Supabase via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 0; line-height: 1.6; color: #333; }
-        header, main, footer { padding: 2rem; max-width: 800px; margin: auto; }
-        header { background: #f4f4f4; text-align: center; }
-        form { background: #f9f9f9; padding: 1.5rem; border: 1px solid #ddd; margin-top: 2rem; border-radius: 5px; }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: .5rem; font-weight: bold; }
-        input, select, textarea { width: 100%; padding: .5rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background: #007bff; color: white; border: none; padding: .7rem 1.5rem; cursor: pointer; border-radius: 4px; }
-        button:hover { background: #0056b3; }
-        #mensagem-status { margin-top: 1rem; font-weight: bold; }
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --subtext: #475569;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header { 
+            background: linear-gradient(135deg, #4f46e5, #7c3aed); 
+            color: white; 
+            text-align: center; 
+            padding: 3.5rem 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        header h1 { font-size: 2.3rem; margin-bottom: 0.5rem; font-weight: 700; }
+        header p { font-size: 1.1rem; opacity: 0.9; }
+
+        main { max-width: 900px; margin: auto; padding: 0 1.5rem 3rem; }
+
+        section { 
+            background: var(--card-bg); 
+            padding: 2rem; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            margin-bottom: 2rem;
+        }
+
+        h2 { color: var(--primary); margin-bottom: 1rem; font-size: 1.5rem; }
+
+        /* Barra de Pesquisa */
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        /* Grid de Cursos */
+        .cursos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .curso-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .curso-card:hover {
+            border-color: var(--primary);
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        .curso-card span { font-weight: 500; }
+        .curso-card .tag { font-size: 0.8rem; background: #e0e7ff; color: var(--primary); padding: 0.2rem 0.6rem; border-radius: 20px; }
+
+        /* Formulário */
+        form { margin-top: 1rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; margin-bottom: .4rem; font-weight: 600; color: var(--subtext); }
+        
+        input, select { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 6px; 
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 0.9rem 1.8rem; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button:hover { background: var(--primary-hover); }
+
+        #mensagem-status { 
+            margin-top: 1rem; 
+            font-weight: 600; 
+            text-align: center;
+            padding: 0.8rem;
+            border-radius: 6px;
+            display: none;
+        }
+
+        footer { text-align: center; padding: 2rem; color: var(--subtext); }
     </style>
 </head>
 <body>
+
     <header>
         <h1>Educação para o Futuro</h1>
-        <p>Aulas particulares e acompanhamento escolar.</p>
+        <p>Aulas particulares e acompanhamento escolar personalizado</p>
     </header>
     
     <main>
         <section>
             <h2>Sobre as Aulas</h2>
-            <p>Oferecemos suporte completo em matemática, português, ciências, inglês, biologia, linguagens, educação física, artes, física, química, geografia, filosofia, sociologia, informática para o ensino fundamental e ensino médio.</p>
+            <p>Oferecemos suporte completo para o Ensino Fundamental e Ensino Médio nas principais disciplinas do currículo acadêmico. Metodologia focada no ritmo e nas necessidades do estudante.</p>
         </section>
         
         <section>
             <h2>Nossos Cursos</h2>
-            <ul>
-                <li>Reforço de Matemática Básica</li>
-                <li>Matemática avançada</li>
-                <li>Redação e Interpretação de Texto</li>
-                <li>Ciências para estudantes</li>
-                <li>Inglês avançado para estudantes</li>
-                <li>Biologia para estudantes</li>
-                <li>Linguagens avançada para estudantes</li>
-                <li>Educação física para melhorar a saúde</li>
-                <li>Artes para estudantes</li>
-                <li>Física avançada para estudantes</li>
-                <li>Química avançada para estudantes</li>
-                <li>Geografia para estudantes</li>
-                <li>Filosofia para estudantes</li>
-                <li>Sociologia para estudantes</li>
-                <li>Informática avançada para estudantes</li>
-            </ul>
+            <!-- Campo de Busca Dinâmico -->
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="campo-busca" placeholder="Pesquisar por matéria ou curso...">
+            </div>
+
+            <!-- Grid interativo de cursos -->
+            <div class="cursos-grid" id="lista-cursos">
+                <!-- Preenchido dinamicamente pelo JS -->
+            </div>
         </section>
 
-        <section>
+        <section id="secao-inscricao">
             <h2>Inscreva-se nas Aulas</h2>
             <form id="form-contato">
                 <div class="form-group">
                     <label for="nome">Nome Completo:</label>
-                    <input type="text" id="nome" required>
+                    <input type="text" id="nome" placeholder="Digite seu nome" required>
                 </div>
                 <div class="form-group">
                     <label for="email">E-mail:</label>
-                    <input type="email" id="email" required>
+                    <input type="email" id="email" placeholder="seu@email.com" required>
                 </div>
                 <div class="form-group">
                     <label for="curso">Curso Desejado:</label>
                     <select id="curso" required>
                         <option value="">Selecione um curso</option>
-                        <option value="Reforço de Matemática Básica">Reforço de Matemática Básica</option>
-                        <option value="Matemática avançada">Matemática avançada</option>
-                        <option value="Redação e Interpretação de Texto">Redação e Interpretação de Texto</option>
-                        <option value="Ciências para estudantes">Ciências para estudantes</option>
-                        <option value="Inglês avançado para estudantes">Inglês avançado para estudantes</option>
-                        <option value="Biologia para estudantes">Biologia para estudantes</option>
-                        <option value="Linguagens avançada para estudantes">Linguagens avançada para estudantes</option>
-                        <option value="Educação física para melhorar a saúde">Educação física para melhorar a saúde</option>
-                        <option value="Artes para estudantes">Artes para estudantes</option>
-                        <option value="Física avançada para estudantes">Física avançada para estudantes</option>
-                        <option value="Química avançada para estudantes">Química avançada para estudantes</option>
-                        <option value="Geografia para estudantes">Geografia para estudantes</option>
-                        <option value="Filosofia para estudantes">Filosofia para estudantes</option>
-                        <option value="Sociologia para estudantes">Sociologia para estudantes</option>
-                        <option value="Informática avançada para estudantes">Informática avançada para estudantes</option>
                     </select>
                 </div>
                 <button type="submit">Enviar Inscrição</button>
-                <p id="mensagem-status"></p>
+                <div id="mensagem-status"></div>
             </form>
         </section>
     </main>
     
     <footer>
-        <p>Contato: Grauescola@educacao.com.br</p>
+        <p>Dúvidas? Entre em contato: <strong>Grauescola@educacao.com.br</strong></p>
     </footer>
 
-    <!-- Script de Integração com o Supabase -->
     <script>
-        // Substitua pelas suas credenciais reais do projeto Supabase
+        // Array com a lista de cursos para dinamizar o site
+        const listaDeCursos = [
+            "Reforço de Matemática Básica",
+            "Matemática avançada",
+            "Redação e Interpretação de Texto",
+            "Ciências para estudantes",
+            "Inglês avançado para estudantes",
+            "Biologia para estudantes",
+            "Linguagens avançada para estudantes",
+            "Educação física para melhorar a saúde",
+            "Artes para estudantes",
+            "Física avançada para estudantes",
+            "Química avançada para estudantes",
+            "Geografia para estudantes",
+            "Filosofia para estudantes",
+            "Sociologia para estudantes",
+            "Informática avançada para estudantes"
+        ];
+
+        // Elementos do DOM
+        const gridCursos = document.getElementById('lista-cursos');
+        const selectCurso = document.getElementById('curso');
+        const campoBusca = document.getElementById('campo-busca');
+
+        // Renderiza os cursos na tela e preenche o <select>
+        function renderizarCursos(filtro = '') {
+            gridCursos.innerHTML = '';
+            
+            const cursosFiltrados = listaDeCursos.filter(curso => 
+                curso.toLowerCase().includes(filtro.toLowerCase())
+            );
+
+            if (cursosFiltrados.length === 0) {
+                gridCursos.innerHTML = '<p style="color: #94a3b8;">Nenhum curso encontrado.</p>';
+                return;
+            }
+
+            cursosFiltrados.forEach(curso => {
+                const card = document.createElement('div');
+                card.className = 'curso-card';
+                card.innerHTML = `
+                    <span>${curso}</span>
+                    <span class="tag">Selecionar</span>
+                `;
+                
+                // Ao clicar no card do curso, seleciona ele automaticamente no formulário e rola a tela
+                card.addEventListener('click', () => {
+                    selectCurso.value = curso;
+                    document.getElementById('secao-inscricao').scrollIntoView({ behavior: 'smooth' });
+                });
+
+                gridCursos.appendChild(card);
+            });
+        }
+
+        // Popula o select do formulário
+        function popularSelect() {
+            listaDeCursos.forEach(curso => {
+                const option = document.createElement('option');
+                option.value = curso;
+                option.textContent = curso;
+                selectCurso.appendChild(option);
+            });
+        }
+
+        // Evento de busca em tempo real
+        campoBusca.addEventListener('input', (e) => {
+            renderizarCursos(e.target.value);
+        });
+
+        // Inicializar elementos da página
+        popularSelect();
+        renderizarCursos();
+
+        // INTEGRACAO COM SUPABASE
         const SUPABASE_URL = 'SUA_SUPABASE_URL_AQUI';
         const SUPABASE_ANON_KEY = 'SUA_SUPABASE_ANON_KEY_AQUI';
 
-        // Inicializa o cliente do Supabase
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -114,21 +300,23 @@
             const email = document.getElementById('email').value;
             const curso = document.getElementById('curso').value;
 
+            statusMensagem.style.display = 'block';
+            statusMensagem.style.backgroundColor = '#f1f5f9';
             statusMensagem.style.color = '#333';
             statusMensagem.textContent = 'Enviando dados...';
 
-            // Insere os dados na tabela 'inscricoes' do Supabase
-            // Certifique-se de criar uma tabela chamada 'inscricoes' com as colunas: nome, email, curso
             const { data, error } = await _supabase
                 .from('inscricoes')
                 .insert([{ nome: nome, email: email, curso: curso }]);
 
             if (error) {
                 console.error('Erro ao inserir:', error);
-                statusMensagem.style.color = 'red';
+                statusMensagem.style.backgroundColor = '#fef2f2';
+                statusMensagem.style.color = '#dc2626';
                 statusMensagem.textContent = 'Erro ao enviar inscrição. Tente novamente.';
             } else {
-                statusMensagem.style.color = 'green';
+                statusMensagem.style.backgroundColor = '#f0fdf4';
+                statusMensagem.style.color = '#16a34a';
                 statusMensagem.textContent = 'Inscrição enviada com sucesso!';
                 formulario.reset();
             }
