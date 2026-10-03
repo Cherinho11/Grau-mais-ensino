@@ -3,213 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aulas de Educação - Reforço Escolar</title>
-    <!-- Importando a biblioteca oficial do Supabase via CDN -->
+    <title>Grau + Ensino | Reforço Escolar</title>
+    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         :root {
             --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg: #f8fafc;
+            --primary-dark: #3730a3;
+            --secondary: #06b6d4;
+            --bg: #f1f5f9;
             --card-bg: #ffffff;
-            --text: #0f172a;
-            --subtext: #475569;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; }
+
+        /* Cabeçalho de Impacto */
+        header {
+            background: linear-gradient(135deg, #312e81 0%, #4f46e5 100%);
+            color: white;
+            padding: 4rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        header { 
-            background: linear-gradient(135deg, #4f46e5, #7c3aed); 
-            color: white; 
-            text-align: center; 
-            padding: 3.5rem 1rem;
+        header h1 { font-size: 2.8rem; margin-bottom: 0.5rem; font-weight: 800; }
+        header p { font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: auto; }
+
+        /* Container Principal */
+        .container { max-width: 1000px; margin: -2rem auto 3rem; padding: 0 1rem; }
+
+        /* Cartões Visuais */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
 
-        header h1 { font-size: 2.3rem; margin-bottom: 0.5rem; font-weight: 700; }
-        header p { font-size: 1.1rem; opacity: 0.9; }
+        h2 { color: var(--primary); font-size: 1.6rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
 
-        main { max-width: 900px; margin: auto; padding: 0 1.5rem 3rem; }
-
-        section { 
-            background: var(--card-bg); 
-            padding: 2rem; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
-            margin-bottom: 2rem;
-        }
-
-        h2 { color: var(--primary); margin-bottom: 1rem; font-size: 1.5rem; }
-
-        /* Barra de Pesquisa */
-        .search-box {
+        /* Barra de Pesquisa em Destaque */
+        .search-container {
+            margin: 1.5rem 0;
             position: relative;
-            margin-bottom: 1.5rem;
         }
 
-        .search-box input {
+        .search-container input {
             width: 100%;
-            padding: 0.8rem 1rem 0.8rem 2.8rem;
+            padding: 1rem 1.2rem;
+            font-size: 1.1rem;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .search-box input:focus {
+            border-radius: 10px;
             outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-container input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
         }
 
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
-
-        /* Grid de Cursos */
+        /* Grade de Cursos Interativos */
         .cursos-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 1rem;
-            max-height: 400px;
+            max-height: 420px;
             overflow-y: auto;
             padding-right: 5px;
         }
 
         .curso-card {
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 1rem;
-            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }
 
         .curso-card:hover {
             border-color: var(--primary);
-            background: #f1f5f9;
+            background: #eef2ff;
             transform: translateY(-2px);
         }
 
-        .curso-card span { font-weight: 500; }
-        .curso-card .tag { font-size: 0.8rem; background: #e0e7ff; color: var(--primary); padding: 0.2rem 0.6rem; border-radius: 20px; }
-
-        /* Formulário */
-        form { margin-top: 1rem; }
-        .form-group { margin-bottom: 1.2rem; }
-        label { display: block; margin-bottom: .4rem; font-weight: 600; color: var(--subtext); }
+        .curso-card span { font-weight: 600; font-size: 0.95rem; color: #1e293b; }
         
-        input, select { 
-            width: 100%; 
-            padding: 0.75rem; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 6px; 
+        .btn-select {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Formulário Moderno */
+        .form-group { margin-bottom: 1.2rem; }
+        
+        label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: #334155; }
+
+        input[type="text"], input[type="email"], select {
+            width: 100%;
+            padding: 0.82rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
             font-size: 1rem;
+            outline: none;
+            background: #f8fafc;
         }
 
         input:focus, select:focus {
-            outline: none;
             border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
 
-        button { 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            padding: 0.9rem 1.8rem; 
-            cursor: pointer; 
-            border-radius: 6px; 
-            font-size: 1rem;
-            font-weight: 600;
+        button.btn-submit {
             width: 100%;
-            transition: background 0.2s;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
         }
 
-        button:hover { background: var(--primary-hover); }
+        button.btn-submit:hover { opacity: 0.95; }
 
-        #mensagem-status { 
-            margin-top: 1rem; 
-            font-weight: 600; 
-            text-align: center;
+        #mensagem-status {
+            margin-top: 1rem;
             padding: 0.8rem;
-            border-radius: 6px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
             display: none;
         }
 
-        footer { text-align: center; padding: 2rem; color: var(--subtext); }
+        footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.95rem; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>Educação para o Futuro</h1>
-        <p>Aulas particulares e acompanhamento escolar personalizado</p>
+        <p>Aulas particulares e acompanhamento escolar especializado para o Ensino Fundamental e Médio.</p>
     </header>
-    
-    <main>
-        <section>
-            <h2>Sobre as Aulas</h2>
-            <p>Oferecemos suporte completo para o Ensino Fundamental e Ensino Médio nas principais disciplinas do currículo acadêmico. Metodologia focada no ritmo e nas necessidades do estudante.</p>
-        </section>
-        
-        <section>
-            <h2>Nossos Cursos</h2>
-            <!-- Campo de Busca Dinâmico -->
-            <div class="search-box">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="campo-busca" placeholder="Pesquisar por matéria ou curso...">
+
+    <div class="container">
+        <!-- Sobre -->
+        <div class="card">
+            <h2>📘 Sobre as Aulas</h2>
+            <p>Oferecemos suporte pedagógico completo com professores qualificados para ajudar no aprendizado, tirar dúvidas e reforçar o desempenho nas principais disciplinas escolares.</p>
+        </div>
+
+        <!-- Cursos e Pesquisa -->
+        <div class="card">
+            <h2>🔍 Nossos Cursos & Disciplinas</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Digite a matéria que procura ou clique em "Selecionar" para preencher o formulário automaticamente.</p>
+            
+            <div class="search-container">
+                <input type="text" id="campo-busca" placeholder="Pesquisar curso (ex: Matemática, Inglês, Redação)...">
             </div>
 
-            <!-- Grid interativo de cursos -->
             <div class="cursos-grid" id="lista-cursos">
-                <!-- Preenchido dinamicamente pelo JS -->
+                <!-- Cursos inseridos via JS -->
             </div>
-        </section>
+        </div>
 
-        <section id="secao-inscricao">
-            <h2>Inscreva-se nas Aulas</h2>
+        <!-- Formulário de Inscrição -->
+        <div class="card" id="secao-inscricao">
+            <h2>✍️ Inscreva-se nas Aulas</h2>
             <form id="form-contato">
                 <div class="form-group">
                     <label for="nome">Nome Completo:</label>
-                    <input type="text" id="nome" placeholder="Digite seu nome" required>
+                    <input type="text" id="nome" placeholder="Digite seu nome completo" required>
                 </div>
+
                 <div class="form-group">
-                    <label for="email">E-mail:</label>
+                    <label for="email">E-mail de Contato:</label>
                     <input type="email" id="email" placeholder="seu@email.com" required>
                 </div>
+
                 <div class="form-group">
                     <label for="curso">Curso Desejado:</label>
                     <select id="curso" required>
-                        <option value="">Selecione um curso</option>
+                        <option value="">Selecione um curso na lista abaixo ou pesquise acima</option>
                     </select>
                 </div>
-                <button type="submit">Enviar Inscrição</button>
+
+                <button type="submit" class="btn-submit">Enviar Inscrição</button>
                 <div id="mensagem-status"></div>
             </form>
-        </section>
-    </main>
-    
+        </div>
+    </div>
+
     <footer>
-        <p>Dúvidas? Entre em contato: <strong>Grauescola@educacao.com.br</strong></p>
+        <p>Dúvidas? Fale conosco: <strong>Grauescola@educacao.com.br</strong></p>
     </footer>
 
     <script>
-        // Array com a lista de cursos para dinamizar o site
+        // Lista completa dos 15 cursos
         const listaDeCursos = [
             "Reforço de Matemática Básica",
             "Matemática avançada",
@@ -228,58 +236,54 @@
             "Informática avançada para estudantes"
         ];
 
-        // Elementos do DOM
         const gridCursos = document.getElementById('lista-cursos');
         const selectCurso = document.getElementById('curso');
         const campoBusca = document.getElementById('campo-busca');
 
-        // Renderiza os cursos na tela e preenche o <select>
+        // Renderiza os Cards de Cursos
         function renderizarCursos(filtro = '') {
             gridCursos.innerHTML = '';
             
-            const cursosFiltrados = listaDeCursos.filter(curso => 
-                curso.toLowerCase().includes(filtro.toLowerCase())
-            );
+            const filtrados = listaDeCursos.filter(c => c.toLowerCase().includes(filtro.toLowerCase()));
 
-            if (cursosFiltrados.length === 0) {
-                gridCursos.innerHTML = '<p style="color: #94a3b8;">Nenhum curso encontrado.</p>';
+            if (filtrados.length === 0) {
+                gridCursos.innerHTML = '<p style="color: var(--text-muted); padding: 1rem;">Nenhum curso encontrado com esse nome.</p>';
                 return;
             }
 
-            cursosFiltrados.forEach(curso => {
-                const card = document.createElement('div');
-                card.className = 'curso-card';
-                card.innerHTML = `
+            filtrados.forEach(curso => {
+                const item = document.createElement('div');
+                item.className = 'curso-card';
+                item.innerHTML = `
                     <span>${curso}</span>
-                    <span class="tag">Selecionar</span>
+                    <button type="button" class="btn-select">Selecionar</button>
                 `;
                 
-                // Ao clicar no card do curso, seleciona ele automaticamente no formulário e rola a tela
-                card.addEventListener('click', () => {
+                item.addEventListener('click', () => {
                     selectCurso.value = curso;
                     document.getElementById('secao-inscricao').scrollIntoView({ behavior: 'smooth' });
                 });
 
-                gridCursos.appendChild(card);
+                gridCursos.appendChild(item);
             });
         }
 
-        // Popula o select do formulário
+        // Popula o campo <select>
         function popularSelect() {
             listaDeCursos.forEach(curso => {
-                const option = document.createElement('option');
-                option.value = curso;
-                option.textContent = curso;
-                selectCurso.appendChild(option);
+                const opt = document.createElement('option');
+                opt.value = curso;
+                opt.textContent = curso;
+                selectCurso.appendChild(opt);
             });
         }
 
-        // Evento de busca em tempo real
+        // Filtro em tempo real
         campoBusca.addEventListener('input', (e) => {
             renderizarCursos(e.target.value);
         });
 
-        // Inicializar elementos da página
+        // Inicialização das funções
         popularSelect();
         renderizarCursos();
 
@@ -301,8 +305,8 @@
             const curso = document.getElementById('curso').value;
 
             statusMensagem.style.display = 'block';
-            statusMensagem.style.backgroundColor = '#f1f5f9';
-            statusMensagem.style.color = '#333';
+            statusMensagem.style.backgroundColor = '#e2e8f0';
+            statusMensagem.style.color = '#1e293b';
             statusMensagem.textContent = 'Enviando dados...';
 
             const { data, error } = await _supabase
@@ -313,11 +317,11 @@
                 console.error('Erro ao inserir:', error);
                 statusMensagem.style.backgroundColor = '#fef2f2';
                 statusMensagem.style.color = '#dc2626';
-                statusMensagem.textContent = 'Erro ao enviar inscrição. Tente novamente.';
+                statusMensagem.textContent = 'Erro ao enviar inscrição. Verifique os dados ou tente novamente.';
             } else {
                 statusMensagem.style.backgroundColor = '#f0fdf4';
                 statusMensagem.style.color = '#16a34a';
-                statusMensagem.textContent = 'Inscrição enviada com sucesso!';
+                statusMensagem.textContent = 'Inscrição realizada com sucesso!';
                 formulario.reset();
             }
         });
